@@ -1,20 +1,20 @@
 import requests
 import bs4
 
-## Returns formatted string version of the verse number that can be used to identify the verse in the DOM
-def formatVerse(verse):
-    verse = str(verse)
-    if len(verse) == 1:
-        return '00' + verse
-    elif len(verse) == 2:
-        return '0' + verse
+## Returns formatted string version of the verseNum number that can be used to identify the verseNum in the DOM
+def formatVerse(verseNum):
+    verseNum = str(verseNum)
+    if len(verseNum) == 1:
+        return '00' + verseNum
+    elif len(verseNum) == 2:
+        return '0' + verseNum
     else:   
-        return verse
+        return verseNum
 
-def getVerse(book, chapter, verse):
-    verse = formatVerse(verse)
+def getVerse(book, chapterNum, verseNum):
+    verseNum = formatVerse(verseNum)
     ## Format web address with book and chapter variables
-    web_address = 'https://www.jw.org/en/library/bible/nwt/books/' + book + '/' + str(chapter)
+    web_address = 'https://www.jw.org/en/library/bible/nwt/books/' + book + '/' + str(chapterNum)
 
     ## Request web address and throw an error if the status code is not successful
     try: 
@@ -26,18 +26,18 @@ def getVerse(book, chapter, verse):
     ## Assign the HTML to a BeautifulSoup object stored within the soup variable
     soup = bs4.BeautifulSoup(res.text, 'html.parser')
 
-    ## Assign the span tag ending in the verse variable's value to verseContent
-    verseContent = soup.select('[id$="' + str(verse) + '"]')[0]
+    ## verseContent is assigned the span tag inside the span tag whose id ends in the value of verseNum
+    verseContent = soup.select('[id$="' + str(verseNum) + '"] span')[0]
 
-    ## Take out the verse number contained in the sup.verseNum tag from the start of the verse
-    verseContent.select('.verseNum')[0].decompose()
+    ## To clean up the verse formatting from extraenous asterisks and footnote signs, we iterate and delete direct descendants of verseContent
+    for child in verseContent.children:
+        child.decompose()
 
-    ## Return the verse's text without any HTML tags
+    ## Return the verseNum's text without any HTML tags
     return verseContent.text.strip()
 
 print(getVerse('Genesis', 50, 23))
 
 
 ## Todo:
-#  - take out all footnotes and spans
 #  - copy over all RegExs
