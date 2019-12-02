@@ -1,7 +1,7 @@
 import requests
 import bs4
 
-## Returns formatted string version of the verseNum number that can be used to identify the verseNum in the DOM
+## Returns zero-padded string version of the verseNum number that can be used to identify the verseNum in the DOM
 def formatVerse(verseNum):
     verseNum = str(verseNum)
     if len(verseNum) == 1:
@@ -26,18 +26,18 @@ def getVerse(book, chapterNum, verseNum):
     ## Assign the HTML to a BeautifulSoup object stored within the soup variable
     soup = bs4.BeautifulSoup(res.text, 'html.parser')
 
-    ## verseContent is assigned the span tag inside the span tag whose id ends in the value of verseNum
-    verseContent = soup.select('[id$="' + str(verseNum) + '"] span')[0]
+    ## verseContent is assigned the span tag whose id ends in the value of verseNum
+    verseContent = soup.select('[id$="' + str(verseNum) + '"]')[0]
 
     ## To clean up the verse formatting from extraenous asterisks and footnote signs, we iterate and delete direct descendants of verseContent
-    for child in verseContent.children:
-        child.decompose()
-
+    
+    print(verseContent)
     ## Return the verseNum's text without any HTML tags
     return verseContent.text.strip()
 
-print(getVerse('Genesis', 50, 23))
+print(getVerse('Proverbs', 3, 5))
 
 
 ## Todo:
 #  - copy over all RegExs
+#  - format strings
