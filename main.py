@@ -26,18 +26,20 @@ def getVerse(book, chapterNum, verseNum):
     ## Assign the HTML to a BeautifulSoup object stored within the soup variable
     soup = bs4.BeautifulSoup(res.text, 'html.parser')
 
-    ## verseContent is assigned the span tag whose id ends in the value of verseNum
-    verseContent = soup.select('[id$="' + str(verseNum) + '"]')[0]
+    ## verseContent is assigned an array of the spans inside the span tag whose id ends in the value of verseNum
+    verseContent = soup.select('[id$="' + str(verseNum) + '"] span')
 
-    ## To clean up the verse formatting from extraenous asterisks and footnote signs, we iterate and delete direct descendants of verseContent
-    
-    print(verseContent)
-    ## Return the verseNum's text without any HTML tags
-    return verseContent.text.strip()
+    ## Iterates through contents of spans, if the child is not a tag, then it is concatenated to verseText
+    verseText = ''
+    for span in verseContent:
+        for child in span.contents:
+            if not isinstance(child, bs4.Tag):
+                verseText += child.strip()
+                
+    return verseText
 
-print(getVerse('Proverbs', 3, 5))
+print(getVerse('Proverbs', 3, 15))
 
 
 ## Todo:
-#  - copy over all RegExs
-#  - format strings
+# - redo variable names
